@@ -83,7 +83,12 @@ class Game extends React.Component {
     // In the constructor, 'this' is an instance of Game object
     // since I am passing an arrow function when instantiation
     //  <Board />, I no longer have to bind 'this' to the Game object
-    // this.handleClick = this.handleClick.bind(this);
+
+    // however, reading this- https://medium.com/@charpeni/arrow-functions-in-class-properties-might-not-be-as-great-as-we-think-3b3551c440b1
+    // i feel, we should bind this.handleClick in the constructor rather than use arrow functions
+    // in render, since we won't need to create a new function each time we render
+    // and also because arrow functions are slower
+    this.handleClick = this.handleClick.bind(this);
   }
   handleClick(i) {
     console.log(`in Game handleClick. this=`, this);
@@ -114,7 +119,7 @@ class Game extends React.Component {
 
           onClick={(i) => this.handleClick(i)}
         */}
-          <Board onClick={(i) => this.handleClick(i)}
+          <Board onClick={this.handleClick}
             squares={history[history.length - 1].squares}
             xIsNext={this.state.xIsNext} />
         </div>
