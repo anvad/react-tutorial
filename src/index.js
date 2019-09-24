@@ -85,7 +85,7 @@ class Game extends React.Component {
     //  <Board />, I no longer have to bind 'this' to the Game object
     // this.handleClick = this.handleClick.bind(this);
   }
-  handleClick = (i) => {
+  handleClick(i) {
     console.log(`in Game handleClick. this=`, this);
     const history = [...this.state.history];
     const current = {
@@ -114,7 +114,7 @@ class Game extends React.Component {
 
           onClick={(i) => this.handleClick(i)}
         */}
-          <Board onClick={this.handleClick}
+          <Board onClick={(i) => this.handleClick(i)}
             squares={history[history.length - 1].squares}
             xIsNext={this.state.xIsNext} />
         </div>
