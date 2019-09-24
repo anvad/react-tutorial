@@ -12,47 +12,21 @@ const Square = (props) => (
 );
 
 class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    };
-  }
-  handleClick(i) {
-    // this is one way, where all the computation is happeing inside setState
-    // this.setState((state) => {
-    //   const squares = [...state.squares];
-    //   squares[i] = 'X';
-    //   return { squares };
-    // });
 
-    // another way is to do the computation and then call setState
-    const squares = [...this.state.squares];
-    // return early if square is already filled or if game over
-    if (squares[i] || calculateWinner(squares)) {
-      return;
-    }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares,
-      xIsNext: !this.state.xIsNext,
-    });
-  }
   renderSquare(i) {
     return <Square
-      value={this.state.squares[i]}
-      onClick={() => this.handleClick(i)}
+      value={this.props.squares[i]}
+      onClick={() => this.props.onClick(i)}
     />;
   }
 
   render() {
-    let status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    const winner = calculateWinner(this.state.squares);
+    let status = 'Next player: ' + (this.props.xIsNext ? 'X' : 'O');
+    const winner = calculateWinner(this.props.squares);
     if (winner) {
       status = `Game Over! '${winner}' has won!`
     }
-    
+
 
     return (
       <div>
@@ -98,11 +72,51 @@ function calculateWinner(squares) {
 }
 
 class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      xIsNext: true,
+    };
+    // In the constructor, 'this' is an instance of Game object
+    // since I am passing an arrow function when instantiation
+    //  <Board />, I no longer have to bind 'this' to the Game object
+    // this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick = (i) => {
+    console.log(`in Game handleClick. this=`, this);
+    const history = [...this.state.history];
+    const current = {
+      ...history[history.length - 1]
+    };
+    // return early if square is already filled or if game over
+    if (current.squares[i] || calculateWinner(current.squares)) {
+      return;
+    }
+    current.squares[i] = this.state.xIsNext ? 'X' : 'O';
+    history.push({ squares: current.squares });
+    this.setState({
+      history,
+      xIsNext: !this.state.xIsNext,
+    });
+  }
   render() {
+    const history = this.state.history;
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          {/*here, using the arrow function bound 'this' to the arrow function.
+          In the 'render' function, 'this' is an instance of the Game object.
+          and then we see the arrow function calling handleClick, 
+          so handleClick receives the Game object as 'this' and uses it
+
+          onClick={(i) => this.handleClick(i)}
+        */}
+          <Board onClick={this.handleClick}
+            squares={history[history.length - 1].squares}
+            xIsNext={this.state.xIsNext} />
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
