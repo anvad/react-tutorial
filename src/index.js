@@ -21,16 +21,8 @@ class Board extends React.Component {
   }
 
   render() {
-    let status = 'Next player: ' + (this.props.xIsNext ? 'X' : 'O');
-    const winner = calculateWinner(this.props.squares);
-    if (winner) {
-      status = `Game Over! '${winner}' has won!`
-    }
-
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -91,7 +83,6 @@ class Game extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
   handleClick(i) {
-    console.log(`in Game handleClick. this=`, this);
     const history = [...this.state.history];
     const current = {
       ...history[history.length - 1]
@@ -109,6 +100,14 @@ class Game extends React.Component {
   }
   render() {
     const history = this.state.history;
+    const current = history[history.length - 1];
+    const winner = calculateWinner(current.squares);
+    let status;
+    if (winner) {
+      status = "Winner: " + winner;
+    } else {
+      status = "Next player: " + (this.state.xIsNext ? 'X' : 'O');
+    }
     return (
       <div className="game">
         <div className="game-board">
@@ -120,11 +119,10 @@ class Game extends React.Component {
           onClick={(i) => this.handleClick(i)}
         */}
           <Board onClick={this.handleClick}
-            squares={history[history.length - 1].squares}
-            xIsNext={this.state.xIsNext} />
+            squares={current.squares} />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{status}</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
