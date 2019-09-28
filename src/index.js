@@ -71,6 +71,7 @@ class Game extends React.Component {
         squares: Array(9).fill(null),
       }],
       xIsNext: true,
+      stepNumber: 0,
     };
     // In the constructor, 'this' is an instance of Game object
     // since I am passing an arrow function when instantiation
@@ -82,26 +83,53 @@ class Game extends React.Component {
     // and also because arrow functions are slower
     this.handleClick = this.handleClick.bind(this);
   }
+  jumpTo(stepNumber) {
+    console.log("jumpTo stepNumber", stepNumber);
+    const xIsNext = (stepNumber % 2 === 0) ? true : false;
+    this.setState({
+      stepNumber,
+      xIsNext,
+    });
+  }
   handleClick(i) {
+    const stepNumber = this.state.stepNumber + 1;
     const history = [...this.state.history];
     const current = {
-      ...history[history.length - 1]
+      ...history[history.length - 1],
     };
     // return early if square is already filled or if game over
-    if (current.squares[i] || calculateWinner(current.squares)) {
+    // or if we are in the middle of past steps
+    if (current.squares[i] ||
+      (stepNumber !== (history.length)) ||
+      calculateWinner(current.squares)) {
       return;
     }
+    current.squares = [...current.squares];
     current.squares[i] = this.state.xIsNext ? 'X' : 'O';
     history.push({ squares: current.squares });
+    console.log(`handleClick: next stepNumber: ${stepNumber}`);
     this.setState({
       history,
       xIsNext: !this.state.xIsNext,
+      stepNumber,
     });
   }
   render() {
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+
+    const moves = history.map((step, move) => {
+      const desc = move ?
+        'Go to move #' + move :
+        'Go to game start';
+      return (
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
+      );
+    });
+
     let status;
     if (winner) {
       status = "Winner: " + winner;
@@ -123,7 +151,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
