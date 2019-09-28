@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 function FriendStatus(props) {
-  const [isOnline, setIsOnline] = useState(null);
+  // const [isOnline, setIsOnline] = useState(null);
+  const [status, setStatus] = useState({ isOnline: null });
 
   useEffect(() => {
     console.log(`in useEffect (FriendStatus)!`);
     function handleStatusChange(status) {
       console.log(`handleStatusChange. status=`, status);
-      setIsOnline(status.isOnline);
+      setStatus(status);
     }
 
     ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
@@ -19,10 +20,10 @@ function FriendStatus(props) {
     };
   });
 
-  if (isOnline === null) {
+  if (status.isOnline === null) {
     return 'Loading...';
   }
-  return isOnline ? 'Online' : 'Offline';
+  return status.isOnline ? 'Online' : 'Offline';
 }
 
 export class ChatAPI {
