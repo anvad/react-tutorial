@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import UseEffects from './useEffects';
+import { ChatAPI } from './FriendStatus';
 
 const Square = (props) => (
   <button
@@ -137,25 +139,34 @@ class Game extends React.Component {
       status = "Next player: " + (this.state.xIsNext ? 'X' : 'O');
     }
     return (
-      <div className="game">
-        <div className="game-board">
-          {/*here, using the arrow function bound 'this' to the arrow function.
+      <div>
+        <div className="game">
+          <div className="game-board">
+            {/*here, using the arrow function bound 'this' to the arrow function.
           In the 'render' function, 'this' is an instance of the Game object.
           and then we see the arrow function calling handleClick, 
           so handleClick receives the Game object as 'this' and uses it
 
           onClick={(i) => this.handleClick(i)}
         */}
-          <Board onClick={this.handleClick}
-            squares={current.squares} />
+            <Board onClick={this.handleClick}
+              squares={current.squares} />
+          </div>
+          <div className="game-info">
+            <div>{status}</div>
+            <ol>{moves}</ol>
+          </div>
         </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
-        </div>
+        <h2>Hooks</h2>
+        <button onClick={toggleFriendStatus}>Toggle Friend Status</button>
+        <UseEffects />
       </div>
     );
   }
+}
+
+function toggleFriendStatus() {
+  ChatAPI.mockToggleFriendStatus('SK');
 }
 
 // ========================================
