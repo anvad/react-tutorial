@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 function FriendStatus(props) {
+  console.log(`in FriendStatus. props=`, props.friend.id);
   // const [isOnline, setIsOnline] = useState(null);
   const [status, setStatus] = useState({ isOnline: null });
 
@@ -18,7 +19,9 @@ function FriendStatus(props) {
       console.log(`cleanup useEffect (FriendStatus): unsubscribeFromFriendStatus for ${props.friend.id}`);
       ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
     };
-  });
+
+  }, [props.friend.id]);
+  // here we solved the infinite loop problem by passing a dependency array
 
   if (status.isOnline === null) {
     return 'Loading...';
@@ -49,6 +52,7 @@ export class ChatAPI {
     }, 1000);
   }
   static unsubscribeFromFriendStatus = (friendId, handleStatusChange) => {
+    console.log(`unsubscribing eventHandler for ${friendId}`);
     const eventListeners = ChatAPI.friends[friendId];
     if (eventListeners) {
       eventListeners.delete(handleStatusChange);

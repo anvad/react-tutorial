@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import FriendStatus from './FriendStatus';
 
 const UseEffects = (props) => {
+    console.log(`in UseEffects func component`);
     const [count, setCount] = useState(0);
-    const [friendId, setFriendId] = useState('SK');
 
     useEffect(() => {
         console.log('in useEffect (count)', count);
@@ -15,7 +15,7 @@ const UseEffects = (props) => {
         <div>
             <p>You clicked {count} times.</p>
             <button onClick={() => setCount(count + 1)}>{props.buttonName || 'Click me'}</button>
-            <p>Your friend {friendId}'s status is: <FriendStatus friend={{ id: "SK" }} /></p>
+            <p>Your friend {props.friend.id}'s status is: <FriendStatus friend={props.friend} /></p>
         </div>
     );
 };

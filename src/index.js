@@ -74,6 +74,8 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
+      friendId: 'SK',
+      friendIdInput: 'SK',
     };
     // In the constructor, 'this' is an instance of Game object
     // since I am passing an arrow function when instantiation
@@ -115,6 +117,12 @@ class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
       stepNumber,
     });
+  }
+  handleFriendIdInputChange = (event) => {
+    this.setState({ friendIdInput: event.target.value });
+  }
+  toggleFriendStatus = () => {
+    ChatAPI.mockToggleFriendStatus(this.state.friendId);
   }
   render() {
     const history = this.state.history;
@@ -158,16 +166,17 @@ class Game extends React.Component {
           </div>
         </div>
         <h2>Hooks</h2>
-        <button onClick={toggleFriendStatus}>Toggle Friend Status</button>
-        <UseEffects />
+        <button onClick={this.toggleFriendStatus}>Toggle Friend Status</button>
+        <label htmlFor="friendId">New Friend Id</label>
+        <input type="text" id="friendId" value={this.friendId} onChange={(this.handleFriendIdInputChange)}></input>
+        <button onClick={() => { this.setState({ friendId: this.state.friendIdInput }) }}>Update Friend Id</button>
+        <UseEffects friend={{ id: this.state.friendId }} />
       </div>
     );
   }
 }
 
-function toggleFriendStatus() {
-  ChatAPI.mockToggleFriendStatus('SK');
-}
+
 
 // ========================================
 
